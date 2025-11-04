@@ -1,0 +1,37 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload build to GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./frontend/build
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
